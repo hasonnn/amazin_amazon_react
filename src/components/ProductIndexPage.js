@@ -5,7 +5,7 @@ class ProductIndexPage extends Component {
     constructor(props) {
         super(props)
         this.state = { products: [] }
-        this.createProduct = this.createProduct.bind(this)
+        // this.createProduct = this.createProduct.bind(this)
     }
 
     componentDidMount() {
@@ -19,19 +19,19 @@ class ProductIndexPage extends Component {
         })
     }
 
-    createProduct(params){
-        this.setState((state) => {
-          return {
-            products: [
-              ...state.products,
-              {
-                id:  Math.max(...state.products.map(q => q.id)) + 1,
-                ...params
-              }
-            ]
-          }
-        })
-    }
+    // createProduct(params){
+    //     this.setState((state) => {
+    //       return {
+    //         products: [
+    //           ...state.products,
+    //           {
+    //             id:  Math.max(...state.products.map(q => q.id)) + 1,
+    //             ...params
+    //           }
+    //         ]
+    //       }
+    //     })
+    // }
 
     deleteProduct(id) {
         this.setState((state) => {
@@ -64,3 +64,4 @@ class ProductIndexPage extends Component {
 }
 
 export default ProductIndexPage
+

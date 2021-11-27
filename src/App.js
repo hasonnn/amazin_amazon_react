@@ -3,8 +3,12 @@ import ProductShowPage from './components/ProductShowPage'
 import ProductIndexPage from './components/ProductIndexPage'
 import NewProductPage from './components/NewProductPage'
 import Navbar from './components/Navbar';
-import { Session } from './requests'
+import { User } from './requests'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import SignInPage from './components/SignInPage'
+import SignUpPage from './components/SignUpPage'
+import AuthRoute from './components/AuthRoute'
+import NotFoundPage from './components/NotFoundPage'
 
 
 class App extends Component {
@@ -16,16 +20,22 @@ class App extends Component {
   }
 
   componentDidMount() {
-    Session.create({
-      email: 'js@winterfell.gov',
-      password: 'supersecret'
+    this.getCurrentUser()
+  }
+
+  getCurrentUser = () => {
+    return User.current().then(user => {
+      if (user?.id) {
+        this.setState(state => {
+          return { user }
+        })
+      }
     })
-    .then(user => {
-      this.setState((state) => {
-        return {
-          user: user
-        }
-      })
+  }
+
+  onSignOut = () => {
+    this.setState({
+      user: null
     })
   }
 
@@ -33,11 +43,22 @@ class App extends Component {
     return (
       <div className="container">
         <BrowserRouter>
-           <Navbar/>
+           <Navbar currentUser={ this.state.user } onSignOut={ this.onSignOut }/>
            <Switch>
+              <Route exact path='/sign_in' 
+              render={(routeProps) => <SignInPage {...routeProps} onSignIn={ this.getCurrentUser } />}/>
+              <Route exact path='/sign_up' 
+              render={(routeProps) => <SignUpPage {...routeProps} onSignIn={ this.getCurrentUser } />}/>
               <Route exact path='/products' component={ProductIndexPage}/>
-              <Route path='/products/new' component={NewProductPage}/>
+
+              <AuthRoute 
+                isAuthenticated={!!this.state.user}
+                exact path="/products/new"
+                component={NewProductPage}
+              />
+
               <Route path='/products/:id' component={ProductShowPage}/>
+              <Route component={NotFoundPage}/>
            </Switch>
         </BrowserRouter>
       </div>
